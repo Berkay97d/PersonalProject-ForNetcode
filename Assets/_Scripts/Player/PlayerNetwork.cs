@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class PlayerNetwork : NetworkBehaviour
 {
-    [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private PlayerGroundChecker playerGroundChecker;
+    [SerializeField] private PlayerInput _playerInput;
+    [SerializeField] private PlayerGroundChecker _playerGroundChecker;
 
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        playerInput.OnTryJump += OnTryJump;
+        _playerInput.OnTryJump += OnTryJump;
     }
 
     public override void OnNetworkDespawn()
     {
-        playerInput.OnTryJump -= OnTryJump;
+        _playerInput.OnTryJump -= OnTryJump;
     }
     
     private void OnTryJump()
     {
         if (!IsOwner) return;
-        if (!playerGroundChecker.GetIsGrounded()) return;
+        if (!_playerGroundChecker.GetIsGrounded()) return;
         
         Jump();
     }

@@ -1990,9 +1990,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8270aa843b1bb7d4f84dde889eaaf70d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverButton: {fileID: 240326833}
-  hostButton: {fileID: 343921773}
-  clientButton: {fileID: 1129289038}
+  _serverButton: {fileID: 240326833}
+  _hostButton: {fileID: 343921773}
+  _clientButton: {fileID: 1129289038}
 --- !u!1 &1767454731
 GameObject:
   m_ObjectHideFlags: 0

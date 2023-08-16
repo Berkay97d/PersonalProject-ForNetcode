@@ -18,7 +18,12 @@ public class PlayerNetwork : NetworkBehaviour
     {
         _playerInput.OnTryJump -= OnTryJump;
     }
-    
+
+    private void Update()
+    {
+        Move();
+    }
+
     private void OnTryJump()
     {
         if (!IsOwner) return;
@@ -29,7 +34,12 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void Jump()
     {
-        
+        Debug.Log("JUMPED");
+    }
+
+    private void Move()
+    {
+        Debug.Log(_playerInput.GetMovementInput());
     }
     
     

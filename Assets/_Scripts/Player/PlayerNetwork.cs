@@ -46,7 +46,6 @@ public class PlayerNetwork : NetworkBehaviour
     private void Move()
     {
         SetCanMove(_playerGroundChecker.GetIsGrounded());
-        Debug.Log(GetIsMoving());
         
         if (!IsOwner) return;
         if (!m_CanMove) return;

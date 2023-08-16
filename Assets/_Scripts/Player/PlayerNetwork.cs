@@ -1,12 +1,14 @@
 ﻿using System;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 public class PlayerNetwork : NetworkBehaviour
 {
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private PlayerGroundChecker _playerGroundChecker;
-
+    [SerializeField] private int _speed;
+    
 
     public override void OnNetworkSpawn()
     {
@@ -39,7 +41,9 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void Move()
     {
-        Debug.Log(_playerInput.GetMovementInput());
+        if (!IsOwner) return;
+        
+        transform.position += _playerInput.GetMovementInput() * Vector3.right * _speed * Time.deltaTime;
     }
     
     

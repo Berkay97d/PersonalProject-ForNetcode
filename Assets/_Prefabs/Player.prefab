@@ -135,6 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerInput: {fileID: 4930198029446461982}
   _playerGroundChecker: {fileID: 3567975768739775233}
+  _speed: 3
 --- !u!114 &4930198029446461982
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerGroundChecker : MonoBehaviour
 {
-    private bool m_İsGrounded;
+    private bool m_IsGrounded = true;
 
 
     private void Update()
@@ -19,7 +19,7 @@ public class PlayerGroundChecker : MonoBehaviour
 
     public bool GetIsGrounded()
     {
-        return m_İsGrounded;
+        return m_IsGrounded;
     }
 
 

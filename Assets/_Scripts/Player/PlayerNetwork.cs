@@ -9,6 +9,8 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] private PlayerGroundChecker _playerGroundChecker;
     [SerializeField] private int _speed;
     
+    public event Action OnJump;
+    
 
     public override void OnNetworkSpawn()
     {
@@ -36,7 +38,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void Jump()
     {
-        Debug.Log("JUMPED");
+        RaiseOnJump();
     }
 
     private void Move()
@@ -45,6 +47,10 @@ public class PlayerNetwork : NetworkBehaviour
         
         transform.position += _playerInput.GetMovementInput() * Vector3.right * _speed * Time.deltaTime;
     }
-    
+
+    private void RaiseOnJump()
+    {
+        OnJump?.Invoke();
+    }
     
 }

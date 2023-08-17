@@ -10,6 +10,9 @@ using UnityEngine;
 
 public class TestLobby : MonoBehaviour
 {
+    private Lobby m_HostLobby;
+    
+    
     private async void Start()
     {
         await UnityServices.InitializeAsync();
@@ -38,6 +41,8 @@ public class TestLobby : MonoBehaviour
             var maxPlayers = 4;
         
             var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers);
+            
+             m_HostLobby = lobby;
 
             Debug.Log("Lobby created with name of " + lobbyName + " with " + maxPlayers + " max players");
         }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using EmreBeratKR.LazyCoroutines;
 using QFSW.QC;
@@ -8,14 +7,22 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 
 public class TestLobby : MonoBehaviour
 {
     private const int MAX_LİSTED_LOBBY_COUNT = 25;
     
     private Lobby m_HostLobby;
-    
-    
+    private string m_PlayerName;
+
+
+    private void Awake()
+    {
+        m_PlayerName = "Berkay" + Random.Range(0, 100);
+    }
+
     private async void Start()
     {
         await UnityServices.InitializeAsync();
@@ -32,28 +39,54 @@ public class TestLobby : MonoBehaviour
     
     private void OnSignedIn()
     {
-        Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
+        Debug.Log(m_PlayerName + "Signed in " + AuthenticationService.Instance.PlayerId);
     }
     
     [Command]
-    private async void CreateLobby()
+    private async void CreateLobby(string lobbyName, bool isPrivate)
     {
         try
         {
-            var lobbyName = "Test Lobby";
             var maxPlayers = 4;
-        
-            var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers);
             
-             m_HostLobby = lobby;
-
-            Debug.Log("Lobby created with name of " + lobbyName + " with " + maxPlayers + " max players");
+            var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, GetCreateLobbyOptions(isPrivate));
+            
+            m_HostLobby = lobby;
+             
+            PrintPlayers(m_HostLobby);
+             
+            Debug.Log(" Lobby created with name of " + lobbyName + " with " + maxPlayers + " max players and lobby code: " + lobby.LobbyCode);
             
             SendHearthBeat();
         }
         catch (LobbyServiceException exception)
         {
             Debug.Log(exception);
+        }
+    }
+
+    private CreateLobbyOptions GetCreateLobbyOptions(bool isPrivate)
+    {
+        try
+        {
+            CreateLobbyOptions createLobbyOptions = new CreateLobbyOptions
+            {
+               IsPrivate = isPrivate,
+               Player = new Player
+               {
+                   Data = new Dictionary<string, PlayerDataObject>
+                   {
+                       {"PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, m_PlayerName)},
+                   }
+               }
+            };
+
+            return createLobbyOptions;
+        }
+        catch (LobbyServiceException exception)
+        {
+            Debug.Log(exception);
+            return null;
         }
     }
 
@@ -153,4 +186,18 @@ public class TestLobby : MonoBehaviour
             Debug.Log(m_HostLobby.Name + " is still beating <3");
         });
     }
+
+    private void PrintPlayers(Lobby lobby)
+    {
+        Debug.Log("PLayers in lobby " + lobby.Name);
+
+        foreach (var player in lobby.Players)
+        {
+            if (player.Data.TryGetValue("PlayerName", out PlayerDataObject dataObject))
+            {
+                Debug.Log(dataObject.Value);    
+            }
+        }
+    }
+    
 }

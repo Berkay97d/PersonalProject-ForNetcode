@@ -148,7 +148,7 @@ public class TestLobby : MonoBehaviour
     }
 
     [Command]
-    private async void JoinLobby(string lobbyCode)
+    private async void JoinLobbyByCode(string lobbyCode)
     {
         try
         {
@@ -163,7 +163,7 @@ public class TestLobby : MonoBehaviour
     }
     
     [Command]
-    private async void QuickJoinLobby()
+    private async void JoinLobbyQuick()
     {
         try
         {

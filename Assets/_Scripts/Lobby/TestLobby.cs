@@ -114,6 +114,36 @@ public class TestLobby : MonoBehaviour
         };
     }
 
+    [Command]
+    private async void JoinLobby(string lobbyCode)
+    {
+        try
+        {
+            await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode);
+
+            Debug.Log("Joined Lobby with code " + lobbyCode);
+        }
+        catch (LobbyServiceException exception)
+        {
+            Debug.Log(exception);
+        }
+    }
+    
+    [Command]
+    private async void QuickJoinLobby()
+    {
+        try
+        {
+            await Lobbies.Instance.QuickJoinLobbyAsync();
+
+            Debug.Log("Joined Lobby with quick join ");
+        }
+        catch (LobbyServiceException exception)
+        {
+            Debug.Log(exception);
+        }
+    }
+    
     private void SendHearthBeat()
     {
         LazyCoroutines.DoEverySeconds(14, () =>

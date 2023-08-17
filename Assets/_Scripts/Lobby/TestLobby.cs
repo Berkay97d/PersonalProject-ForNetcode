@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using EmreBeratKR.LazyCoroutines;
 using QFSW.QC;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -10,6 +11,8 @@ using UnityEngine;
 
 public class TestLobby : MonoBehaviour
 {
+    private const int MAX_LİSTED_LOBBY_COUNT = 25;
+    
     private Lobby m_HostLobby;
     
     
@@ -26,7 +29,7 @@ public class TestLobby : MonoBehaviour
     {
         AuthenticationService.Instance.SignedIn -= OnSignedIn;
     }
-
+    
     private void OnSignedIn()
     {
         Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
@@ -45,6 +48,8 @@ public class TestLobby : MonoBehaviour
              m_HostLobby = lobby;
 
             Debug.Log("Lobby created with name of " + lobbyName + " with " + maxPlayers + " max players");
+            
+            SendHearthBeat();
         }
         catch (LobbyServiceException exception)
         {
@@ -57,7 +62,7 @@ public class TestLobby : MonoBehaviour
     {
         try
         {
-            var queryResponse = await Lobbies.Instance.QueryLobbiesAsync();
+            var queryResponse = await Lobbies.Instance.QueryLobbiesAsync(LobbyOptions());
 
             Debug.Log("Lobbies found: " + queryResponse.Results.Count);
 
@@ -70,5 +75,52 @@ public class TestLobby : MonoBehaviour
         {
             Debug.Log(exception);
         }
+    }
+
+    private QueryLobbiesOptions LobbyOptions()
+    {
+        try
+        {
+            QueryLobbiesOptions queryLobbiesOptions = new QueryLobbiesOptions
+            {
+                Count = MAX_LİSTED_LOBBY_COUNT,
+                Filters = GetQueryFiltersFilters(),
+                Order = GetQueryOrders()
+            };
+
+            return queryLobbiesOptions;
+        }
+        catch (LobbyServiceException exception)
+        {
+            Debug.Log(exception);
+            
+            return null;
+        }
+    }
+
+    private List<QueryFilter> GetQueryFiltersFilters()
+    {
+        return new List<QueryFilter>
+        {
+            new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
+        };
+    }
+
+    private List<QueryOrder> GetQueryOrders()
+    {
+        return new List<QueryOrder>
+        {
+            new QueryOrder(false, QueryOrder.FieldOptions.Created)
+        };
+    }
+
+    private void SendHearthBeat()
+    {
+        LazyCoroutines.DoEverySeconds(14, () =>
+        {
+            LobbyService.Instance.SendHeartbeatPingAsync(m_HostLobby.Id);
+
+            Debug.Log(m_HostLobby.Name + " is still beating <3");
+        });
     }
 }

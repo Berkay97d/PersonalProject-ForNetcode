@@ -168,9 +168,16 @@ public class TestLobby : MonoBehaviour
     {
         try
         {
-            await Lobbies.Instance.QuickJoinLobbyAsync();
+            QuickJoinLobbyOptions quickJoinLobbyOptions = new QuickJoinLobbyOptions
+            {
+                Player = GetPlayer(),
+            };
+            
+            var joinedLobby = await Lobbies.Instance.QuickJoinLobbyAsync(quickJoinLobbyOptions);
 
             Debug.Log("Joined Lobby with quick join ");
+            
+            PrintPlayers(joinedLobby);
         }
         catch (LobbyServiceException exception)
         {

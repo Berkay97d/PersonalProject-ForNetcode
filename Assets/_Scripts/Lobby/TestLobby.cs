@@ -73,6 +73,7 @@ public class TestLobby : MonoBehaviour
             {
                IsPrivate = isPrivate,
                Player = GetPlayer(),
+               Data = GetCreateLobbyData(),
             };
 
             return createLobbyOptions;
@@ -84,18 +85,26 @@ public class TestLobby : MonoBehaviour
         }
     }
 
+    private Dictionary<string, DataObject> GetCreateLobbyData()
+    {
+        return new Dictionary<string, DataObject>
+        {
+            {"GameMode", new DataObject(DataObject.VisibilityOptions.Public, "DungeonRun")} 
+        };
+    }
+
     [Command]
     private async void ListLobbies()
     {
         try
         {
-            var queryResponse = await Lobbies.Instance.QueryLobbiesAsync(LobbyOptions());
+            var queryResponse = await Lobbies.Instance.QueryLobbiesAsync(GetQueryLobbyOptions());
 
             Debug.Log("Lobbies found: " + queryResponse.Results.Count);
 
             foreach (var lobby in queryResponse.Results)
             {
-                Debug.Log(lobby.Name + " - " + lobby.MaxPlayers);
+                Debug.Log(lobby.Name + " - " + lobby.MaxPlayers + " - " + lobby.Data["GameMode"].Value);
             }
         }
         catch (LobbyServiceException exception)
@@ -104,7 +113,7 @@ public class TestLobby : MonoBehaviour
         }
     }
 
-    private QueryLobbiesOptions LobbyOptions()
+    private QueryLobbiesOptions GetQueryLobbyOptions()
     {
         try
         {
@@ -129,7 +138,7 @@ public class TestLobby : MonoBehaviour
     {
         return new List<QueryFilter>
         {
-            new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
+            new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT),
         };
     }
 
@@ -212,10 +221,7 @@ public class TestLobby : MonoBehaviour
 
         foreach (var player in lobby.Players)
         {
-            if (player.Data.TryGetValue("PlayerName", out PlayerDataObject dataObject))
-            {
-                Debug.Log(dataObject.Value);    
-            }
+            Debug.Log("Player name: " + player.Data["PlayerName"].Value + " " + lobby.Data["GameMode"]);
         }
     }
     

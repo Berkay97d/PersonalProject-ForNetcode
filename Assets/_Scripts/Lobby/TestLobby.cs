@@ -72,13 +72,7 @@ public class TestLobby : MonoBehaviour
             CreateLobbyOptions createLobbyOptions = new CreateLobbyOptions
             {
                IsPrivate = isPrivate,
-               Player = new Player
-               {
-                   Data = new Dictionary<string, PlayerDataObject>
-                   {
-                       {"PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, m_PlayerName)},
-                   }
-               }
+               Player = GetPlayer(),
             };
 
             return createLobbyOptions;
@@ -152,9 +146,16 @@ public class TestLobby : MonoBehaviour
     {
         try
         {
-            await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode);
+            JoinLobbyByCodeOptions joinLobbyByCodeOptions = new JoinLobbyByCodeOptions
+            {
+                Player = GetPlayer(),
+            };
+            
+            var joinedLobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinLobbyByCodeOptions);
 
             Debug.Log("Joined Lobby with code " + lobbyCode);
+            
+            PrintPlayers(joinedLobby);
         }
         catch (LobbyServiceException exception)
         {
@@ -176,7 +177,18 @@ public class TestLobby : MonoBehaviour
             Debug.Log(exception);
         }
     }
-    
+
+    private Player GetPlayer()
+    {
+        return new Player
+        {
+            Data = new Dictionary<string, PlayerDataObject>
+            {
+                {"PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, m_PlayerName)},
+            }
+        };
+    }
+
     private void SendHearthBeat()
     {
         LazyCoroutines.DoEverySeconds(14, () =>

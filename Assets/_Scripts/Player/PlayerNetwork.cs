@@ -49,8 +49,9 @@ public class PlayerNetwork : NetworkBehaviour
         
         if (!IsOwner) return;
         if (!m_CanMove) return;
-            
-        transform.position += _playerInput.GetMovementInput() * Vector3.right * _speed * Time.deltaTime;
+
+        var movementVector = new Vector3(_playerInput.GetMovementInput().x, 0, _playerInput.GetMovementInput().y);
+        transform.position += movementVector *  _speed * Time.deltaTime;
     }
 
     private void RaiseOnJump()
@@ -70,7 +71,7 @@ public class PlayerNetwork : NetworkBehaviour
             return false;
         }
         
-        return _playerInput.GetMovementInput() != 0;
+        return _playerInput.GetMovementInput() != Vector2.zero;
     }
     
 }

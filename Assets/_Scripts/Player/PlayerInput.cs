@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour
     private PlayerInputActions m_PlayerInputActions;
     private InputAction m_Jump;
     private InputAction m_Move;
-    private float m_MovementInput;
+    private Vector2 m_MovementInput;
     
     
     private void OnEnable()
@@ -36,6 +36,7 @@ public class PlayerInput : MonoBehaviour
     {
         m_Jump.performed += OnJumpPerformed;
         m_Move.started += OnMoveStarted;
+        m_Move.performed += OnMovePerformed;
         m_Move.canceled += OnMoveCanceled;
     }
     
@@ -43,19 +44,25 @@ public class PlayerInput : MonoBehaviour
     {
         m_Jump.performed -= OnJumpPerformed;
         m_Move.started -= OnMoveStarted;
+        m_Move.performed -= OnMovePerformed; 
         m_Move.canceled -= OnMoveCanceled;
     }
 
+    private void OnMovePerformed(InputAction.CallbackContext obj)
+    {
+        m_MovementInput = obj.ReadValue<Vector2>();
+    }
+    
     private void OnMoveCanceled(InputAction.CallbackContext obj)
     {
-        m_MovementInput = 0;
+        m_MovementInput = Vector2.zero;
     }
 
     private void OnMoveStarted(InputAction.CallbackContext obj)
     {
         var movementVector = obj.ReadValue<Vector2>();
 
-        m_MovementInput = movementVector.x;
+        m_MovementInput = movementVector;
     }
     
     private void OnJumpPerformed(InputAction.CallbackContext obj)
@@ -63,9 +70,9 @@ public class PlayerInput : MonoBehaviour
         OnTryJump?.Invoke();
     }
     
-    public float GetMovementInput()
+    public Vector2 GetMovementInput()
     {
-        return m_MovementInput;
+        return m_MovementInput.normalized;
     }
     
 }
